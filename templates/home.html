@@ -1,1 +1,20 @@
-<h1>elevted</h1>
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1 style="color: #007BFF;">Registered Ingredients</h1>
+  {% if ingridents %}
+    <ol class="list-group list-group-numbered">
+      {% for ingredient, id in ingridents %}
+        <li class="list-group-item" >
+          <h2 style="color: black; font-size: medium;">{{ ingredient }}</h2>
+          <div class="end-0">
+            <a href="{% url 'delete' id=id %}"class="btn btn-danger">Remove</a>
+        </div>
+        </li>
+      {% endfor %}
+    </ol>
+  {% else %}
+    <p style="color: #FF0000;">No ingredients registered.</p>
+  {% endif %}
+{% endblock %}
+

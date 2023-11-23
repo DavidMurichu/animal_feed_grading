@@ -1,0 +1,298 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <div class="card">
+        <div class="card-body">
+            <form method="post" action="#">
+                {% csrf_token %}
+                <div id="ingredient-container">
+                    <!-- Initial set of input fields -->
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <select name="ingredients" class="form-control">
+                                {% for ingredient_name in unique_ingredient_names %}
+                                    <option value="{{ ingredient_name }}">{{ ingredient_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="quantity">Quantity in Kgs</label>
+                            <input type="number" name="quantity" class="form-control" placeholder="Quantity">
+                        </div>
+                        <div class="col-md-2">
+                            <label for="cost">Cost per Kg</label>
+                            <input type="number" name="unit_cost" class="form-control" placeholder="Unit Cost">
+                        </div>
+                        <div class="col-md-2">
+                            <label for="total_cost">Total Cost</label>
+                            <input type="text" name="total_cost" class="form-control" placeholder="Total Cost" readonly>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="button" class="btn btn-danger" onclick="removeIngredient(this)">Remove</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label for="grand_total_quantity">Grand Total Quantity</label>
+                        <input type="text" id="grand_total_quantity" name="grand_total_quantity" class="form-control" placeholder="Grand Total Quantity" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="grand_total_cost">Grand Total Cost</label>
+                        <input type="text" id="grand_total_cost" name="grand_total_cost" class="form-control" placeholder="Grand Total Cost" readonly>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-primary" onclick="addIngredientFields()">Add Ingredient</button>
+                <!-- <button type="submit" class="btn btn-success">Submit</button>
+                <button type="button" class="btn btn-secondary" onclick="calculateAndDisplayTotals()">Log</button>
+            -->
+            </form>
+        </div>
+        <div class="mt-4" id="tables">
+            <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Ingredient</th>
+                        <th>DM</th>
+                        <th>CP</th>
+                        <th>CF</th>
+                        <th>CA</th>
+                        <th>P</th>
+                        <th>ME</th>
+                        <th>Lysine</th>
+                        <th>Methionin</th>
+                    
+                    </tr>
+                </thead>
+                <tbody id="ingredientTable">
+                    <!-- Table body content will be dynamically populated -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+    </div>
+</div>
+
+
+<script>
+    // Function to add a new set of input fields for an ingredient
+    function addIngredientFields() {
+        var container = document.getElementById('ingredient-container');
+        // Clone the select and input fields
+        var originalSet = container.querySelector('.row');
+        var newSet = originalSet.cloneNode(true);
+
+        // Clear values in the cloned input fields
+        newSet.querySelectorAll('input').forEach(function(input) {
+            input.value = '';
+        });
+        // Append the cloned fields to the container
+        container.appendChild(newSet);
+
+        // Update grand totals and totals dynamically
+      calculate();
+    }
+
+    // Function to remove an ingredient row
+    function removeIngredient(button) {
+        var container = document.getElementById('ingredient-container');
+        var row = button.closest('.row');
+
+        // Check if it's the first row; if yes, don't remove
+        if (row === container.querySelector('.row')) {
+            alert("The first ingredient cannot be removed.");
+            return;
+        }
+
+        container.removeChild(row);
+        calculate();
+        document.getElementById('ingredientTable').innerHTML='';
+        readAllData();
+        calculateAndDisplayTotals();
+      
+    }
+
+    // Update total kg and total cost dynamically when input values change
+    function calculate(){
+        var container = document.getElementById('ingredient-container');
+        var rows = container.querySelectorAll('.row');
+
+        rows.forEach(function(row) {
+            var quantity = parseFloat(row.querySelector('[name="quantity"]').value) || 0;
+            var unitCost = parseFloat(row.querySelector('[name="unit_cost"]').value) || 0;
+
+            var totalCostInput = row.querySelector('[name="total_cost"]');
+            totalCostInput.value = (quantity * unitCost).toFixed(2);
+        });
+
+        var container = document.getElementById('ingredient-container');
+        var rows = container.querySelectorAll('.row');
+        var grandTotalQuantity = 0;
+        var grandTotalCost = 0;
+
+        rows.forEach(function(row) {
+            var quantity = parseFloat(row.querySelector('[name="quantity"]').value) || 0;
+            var unitCost = parseFloat(row.querySelector('[name="unit_cost"]').value) || 0;
+
+            grandTotalQuantity += quantity;
+            grandTotalCost += quantity * unitCost;
+        });
+
+        // Display the grand totals
+        document.getElementById('grand_total_quantity').value = grandTotalQuantity.toFixed(2);
+        document.getElementById('grand_total_cost').value = grandTotalCost.toFixed(2);
+    };
+    document.addEventListener('input', function(event) {
+        calculate();
+        document.getElementById('ingredientTable').innerHTML='';
+        readAllData();
+        calculateAndDisplayTotals();
+
+    });
+
+    function readAllData() {
+    var container = document.getElementById('ingredient-container');
+    var rows = container.querySelectorAll('.row');
+    var allData = [];
+
+    rows.forEach(function(row) {
+        var ingredient = row.querySelector('[name="ingredients"]').value;
+        var quantity = parseFloat(row.querySelector('[name="quantity"]').value) || 0;
+        var unitCost = parseFloat(row.querySelector('[name="unit_cost"]').value) || 0;
+        var totalCost = row.querySelector('[name="total_cost"]').value;
+        var grandTotalCostValue = document.getElementById("grand_total_quantity").value;
+        console.log(grandTotalCostValue);
+
+        // Assuming you have a function to get comp data based on the ingredient
+        // var compData = getCompData(ingredient);
+    var ingredient = row.querySelector('[name="ingredients"]').value;
+    var ingredientsData = JSON.parse('{{ data|safe }}'); 
+    var selectedIngredientData = ingredientsData.find(function(dataIngredient) {
+    return dataIngredient.fields.name === ingredient;
+});
+    // Multiply each field by myInt (excluding the name field)
+    for (var key in selectedIngredientData.fields) {
+        if (key !== 'name') {
+            percentage_comp=(quantity/grandTotalCostValue).toFixed(2);
+            (selectedIngredientData.fields[key]*=percentage_comp).toFixed(2);
+            selectedIngredientData.fields[key]=selectedIngredientData.fields[key].toFixed(2);
+
+        }
+    }
+
+    // Now selectedIngredientData contains the modified data
+// Check if selectedIngredientData is defined and not null
+if (selectedIngredientData && typeof selectedIngredientData === 'object') {
+    // If it's an object, wrap it in an array
+    var dataArray = Array.isArray(selectedIngredientData) ? selectedIngredientData : [selectedIngredientData];
+
+    // Now you can use forEach on the array
+    dataArray.forEach(function (ingredientData) {
+        // Create a new table row
+        var newRow = document.createElement('tr');
+
+        // Iterate through the fields of each selectedIngredientData
+        for (var key in ingredientData.fields) {
+            // Create a new table cell (td) for each field
+            var newCell = document.createElement('td');
+
+            // Set the content of the cell to the field value
+            newCell.textContent = ingredientData.fields[key];
+
+            // Append the cell to the row
+            newRow.appendChild(newCell);
+        }
+
+        // Append the new row to the table
+        document.getElementById('ingredientTable').appendChild(newRow);
+    });
+} else {
+    console.error("No matching data found."); // Handle the case where no data is found
+}
+
+
+    });
+          
+
+}
+
+function calculateAndDisplayTotals() {
+    var table = document.getElementById('ingredientTable');
+
+    // Check if there is a tbody, and create one if not
+    var tbody = table.querySelector('tbody');
+    if (!tbody) {
+        tbody = document.createElement('tbody');
+        table.appendChild(tbody);
+    }
+
+    // Calculate totals for each column
+    var totalDryMatter = calculateColumnTotal(table, 2);
+    var totalCrudeProtein = calculateColumnTotal(table, 3);
+    var totalCrudeFiber = calculateColumnTotal(table, 4);
+    var totalCalcium = calculateColumnTotal(table, 5);
+    var totalPhosphorous = calculateColumnTotal(table, 6);
+    var totalEnergy = calculateColumnTotal(table, 7);
+    var totalLysine = calculateColumnTotal(table, 8);
+    var totalMethionin = calculateColumnTotal(table, 9);
+
+    // Create a new row for totals
+    var total_table=document.createElement('table')
+
+    var totalRow = document.createElement('tr');
+
+    // Create cells for total values
+    var totalCell = document.createElement('td');
+    totalCell.textContent = 'Total';
+    totalRow.appendChild(totalCell);
+
+    for (var i = 1; i <= 8; i++) {
+        var totalCell = document.createElement('td');
+        totalCell.textContent = eval('total' + getColumnName(i));
+        totalRow.appendChild(totalCell);
+    }
+
+    // // Add an empty cell for the "Action" column
+    // var actionCell = document.createElement('td');
+    // totalRow.appendChild(actionCell);
+
+    // Append the total row to the tbody
+   total_table.appendChild(totalRow);
+   document.getElementById('ingredientTable').appendChild(totalRow);
+
+}
+
+
+function calculateColumnTotal(table, columnIndex) {
+    var rows = table.getElementsByTagName('tr');
+    var total = 0;
+
+    // Iterate through rows and calculate total for the specified column
+    for (var i = 0; i < rows.length; i++) {
+        var cells = rows[i].getElementsByTagName('td');
+
+        // Skip rows that don't have enough cells (e.g., header row)
+        if (cells.length >= columnIndex) {
+            // Skip the last column with "Action" heading
+            if (columnIndex === 10) continue;
+
+            var cellValue = parseFloat(cells[columnIndex - 1].textContent) || 0;
+            total += cellValue;
+        }
+    }
+    return total.toFixed(2);
+
+}
+
+function getColumnName(index) {
+    // Function to get column names based on the index
+    var columnNames = [ 'DryMatter', 'CrudeProtein', 'CrudeFiber', 'Calcium', 'Phosphorous', 'Energy', 'Lysine', 'Methionin'];
+    return columnNames[index - 1];
+}
+
+
+</script>
+
+{% endblock %}

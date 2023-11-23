@@ -1,0 +1,90 @@
+{% load static %}
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <a href="#"><title>Hakika Feeds {% block title %} {% endblock %}</title>
+    </a>
+    
+  <link href="{% static 'img/favicon.png' %}" rel="icon">
+  <link href="{% static 'img/apple-touch-icon.png' %}" rel="apple-touch-icon">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+  <link href="{% static 'vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
+  <link href="{% static 'vendor/boxicons/css/boxicons.min.css' %}" rel="stylesheet">
+  <link href="{% static 'vendor/quill/quill.snow.css' %}" rel="stylesheet">
+  <link href="{% static 'vendor/quill/quill.bubble.css' %}" rel="stylesheet">
+  <link href="{% static 'vendor/remixicon/remixicon.css' %}" rel="stylesheet">
+  <link href="{% static 'vendor/simple-datatables/style.css' %}" rel="stylesheet">
+
+  <!-- Template Main CSS File -->
+  <link href="{% static 'staff/style.css' %}" rel="stylesheet">
+
+<script src="{% static 'js/jquery.min.js' %}"></script>
+<script src="{% static 'js/jquery-3.4.1.min.js' %}"></script>
+<script src="{% static 'js/jquery-3.5.1.slim.min.js' %}"></script>
+    <!-- Bootstrap core CSS -->
+    <link href="{% static 'css/bootstrap.min.css'%}" rel="stylesheet" />
+    <link href="{% static 'css/main.css'%}" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
+
+    <!-- Custom styles for this template -->
+    <link href="{% static 'css/dashboard.css' %}" rel="stylesheet" />
+  </head>
+  <body style="background-color: black;">
+    <div class="container mt-4">
+      <nav aria-label="breadcrumb">
+          <ol class="breadcrumb">
+              <li class="breadcrumb-item">
+                  <a href="{% url 'home' %}">Mix Calc</a>
+              </li>
+              <li class="breadcrumb-item active" aria-current="page">Mix Calc</li>
+              <li class="breadcrumb-item">
+                <a class="breadcrumb-item" href="{% url 'add_ingtridients' %}">
+                  <span>Add Ingridient</span>
+                </a>
+              </li>
+              <li class="breadcrumb-item">
+                <a class="breadcrumb-item" href="{% url 'mix' %}">
+                  <span>Analyse</span>
+                </a>
+              </li>
+          </ol>
+      </nav>
+      <div >
+        {% block content %} {% endblock %}
+
+      </div>
+         
+        
+ 
+  
+    <script
+      src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+      integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      window.jQuery ||
+        document.write(
+          '<script src="/docs/4.4/static/js/vendor/jquery.slim.min.js"><\/script>'
+        );
+    </script>
+    <script
+      src="/docs/4.4/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-6khuMg9gaYr5AxOqhkVIODVIvm9ynTT5J4V1cfthmT+emCG6yVmEZsRHdxlotUnm"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.9.0/feather.min.js"></script>
+     <script src="{% static 'js/main.js' %}"></script>
+  </body>
+</html>
+
