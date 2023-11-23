@@ -77,10 +77,10 @@ WSGI_APPLICATION = 'elevated.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',  # Database engine (e.g., 'django.db.backends.mysql' for MySQL).
-        'NAME':  'try',  # Database name or path to the database file.
-        'USER': 'root',  # Database user (usually for databases that require authentication).
-        'PASSWORD': 'fjdls1',  # Password for the database user.
-        'HOST': 'localhost',  # Database server hostname (usually 'localhost' for a local database).
+        'NAME':  '',  # Database name or path to the database file.
+        'USER': '',  # Database user (usually for databases that require authentication).
+        'PASSWORD': '',  # Password for the database user.
+        'HOST': '',  # Database server hostname (usually 'localhost' for a local database).
         'PORT': '',  # Database server port (leave empty for default port).
     }
 }
